@@ -1,3 +1,5 @@
+I have used the command "npm create vite@latest my-classmates --template react" to create my lab assignment template. 
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
