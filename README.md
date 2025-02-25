@@ -42,7 +42,7 @@ Generative AI usage:
 
 This is my first ReactJS project, and I'm still learning JavaScript. I use AI tools like Copilot to generate most of the code and rely on ChatGPT for styling guidance, for example the styling for the name card and the like button. After obtaining the initial code template, I carefully review and adjust it to ensure I fully understand each line and meet the assignment requirements.
 
-The GitHub page link of my deployed webpage: 
+The GitHub page link of my deployed webpage: https://crazygeg.github.io/S25-Assignment/ 
 
 <!-- # React + Vite
 
