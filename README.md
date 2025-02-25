@@ -1,4 +1,4 @@
-# MY CLASSMATES - A ReactJS & Bootstrap Project
+# Lab2 - A ReactJS & Bootstrap Project
 I have used the command "npm create vite@latest my-classmates --template react" to create my lab assignment template.
 
 Overview:
