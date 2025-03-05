@@ -1,104 +1,166 @@
 import React, { useState } from "react";
-import PeopleList from "./PeopleList";
+import "bootstrap/dist/css/bootstrap.min.css";
+import People from "./PeopleList";
 import ProfileCard from "./ProfileCard";
 import StudentTable from "./StudentTable";
 
-
-//Defines a functional React component named App using an arrow function.
-//This component serves as the main entry point of the application.
-//Renders the PeopleList component inside the App component.
 const App = () => {
-  //First initialize students with the deterministic data that I entered for the Lab 2.
-  const [students, setStudents] = useState(PeopleList);
-  //Second initialize selectedStudent with null, which means no student is selected at the beginning.
+  {/* holds the list of student objects and function to update students list */}
+  const [students, setStudents] = useState(People);
+  {/* stores the currently selected student for display in the ProfileCard */}
   const [selectedStudent, setSelectedStudent] = useState(null);
-  //Third initialize newStudent with an object containing empty strings for name, favoriteFood, and favoriteColor.
-  //this variable will be used to get user's input data
-  const [newStudent, setNewStudent] = useState({name:"", favoriteFood:"", favoriteColor:""});
-
-  // control the adding form, when the web load, the form should be invisible
+  {/* store new student's info for adding new student */}
+  const [newStudent, setNewStudent] = useState({
+    name: "",
+    favoriteFood: "",
+    favoriteColor: "",
+  });
+  {/* control whether the "Add Student" form is dispalyed */}
   const [isAdding, setIsAdding] = useState(false);
-  
-  //This function updates the state when a user types in the form input fields.
+
+  {/* retrieves the name and value from the input field */}
+  {/* Note: ..prevStudent ensures previous values are retained while uploading only the changed field. I got errrors without adding this */}
   const handleInputChange = (e) => {
-    setNewStudent({ ...newStudent, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setNewStudent((prevStudent) => ({
+      ...prevStudent,
+      [name]: value,
+    }));
   };
 
-  //add a new student, note trim is used to remove all the whitespace from both ends of a string.
-  //If any of the fields are empty, it shows an alert message.
+  {/* adding a new student with Validation Check. make sure all fields are filled(non-empty) */}
   const addStudent = () => {
-    if (!newStudent.name.trim() || !newStudent.favoriteFood.trim() || !newStudent.favoriteColor.trim()) {
-      alert("All fields are required. If student do not have favorite food or color, please enter 'N/A'.");
+    if (
+      !newStudent.name.trim() ||
+      !newStudent.favoriteFood.trim() ||
+      !newStudent.favoriteColor.trim()
+    ) {
+      alert(
+        "All fields are required. If the student does not have a favorite food or color, please enter 'N/A'."
+      );
       return;
     }
+    {/* assign a unique id to new student object */}
+    const newStudentEntry = {
+      id: students.length + 1,
+      ...newStudent,
+    };
+    {/* Debug Line */}
+    console.log("New Student Entry:", newStudentEntry);
 
-    setStudents([...students, { ...newStudent, likes: 0 }]);
-    //After adding a new student, reset the form fields to empty strings.
-    setNewStudent({ name: "", favoriteFood: "", favoriteColor: "" }); 
-    setIsAdding(false); //Hide the form after adding
+    {/* update students by appending the new entry*/}
+    setStudents((prevStudents) => [...prevStudents, newStudentEntry]);
+    {/* clear the form for future usage */}
+    setNewStudent({ name: "", favoriteFood: "", favoriteColor: "" });
+    {/* hide the form */}
+    setIsAdding(false);
   };
 
-  //update student data, this function updates an existing student’s information in the students state based on the student's name.
+  {/* find and updates a student by name */}
+  {/* use map to replace the old student object with updatedStudent */}
   const updateStudent = (name, updatedStudent) => {
-    setStudents(students.map(student => (student.name === name ? updatedStudent : student)));
+    setStudents((prevStudents) =>
+      prevStudents.map((student) =>
+        student.name === name ? updatedStudent : student
+      )
+    );
   };
 
-  //delete student, take name as an identifier
+  {/* delete a student */}
+  {/* filter out the student whose name matches name */}
   const deleteStudent = (name) => {
-    setStudents(students.filter(student => student.name !== name));
-  
-    // Hide profile card if the deleted student is currently selected
+    setStudents((prevStudents) =>
+      prevStudents.filter((student) => student.name !== name)
+    );
+    {/* if the deleted student is currently selected, it resets selectedStudent to null */}
     if (selectedStudent?.name === name) setSelectedStudent(null);
   };
-  
-  
 
   return (
     <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center">
-        <h2 className="text-left">Student Connect</h2>
-        {/* Button to toggle the form visibility */}
-        <button className="btn btn-primary" onClick={() => setIsAdding(!isAdding)}>
-          {isAdding ? "Cancel" : "Add Student"}</button> 
+      {/* Updated heading with proper styling */}
+      <div style={{ marginTop: "20px", padding: "20px" }}>
+        <h2 style={{ textAlign: "left", marginBottom: "20px" }}>Student Connect</h2>
       </div>
-      
-      {/*Showing the form if isAdding is true*/}
+
+      {/* Add Student Button */}
+      <div className="d-flex justify-content-between align-items-center">
+        <button
+          className="btn btn-primary"
+          onClick={() => setIsAdding((prev) => !prev)}
+        >
+          {isAdding ? "Cancel" : "Add Student"}
+        </button>
+      </div>
+
+      {/* Add Student Form */}
       {isAdding && (
         <div className="card mb-4 mt-3 p-3">
           <h4>Add New Student</h4>
           <div className="row">
             <div className="col">
-              <input type="text" className="form-control" name="name" placeholder="Name" value={newStudent.name} onChange={handleInputChange} />
+              <input
+                type="text"
+                className="form-control"
+                name="name"
+                placeholder="Name"
+                value={newStudent.name}
+                onChange={handleInputChange}
+              />
             </div>
             <div className="col">
-              <input type="text" className="form-control" name="favoriteFood" placeholder="Favorite Food" value={newStudent.favoriteFood} onChange={handleInputChange} />
+              <input
+                type="text"
+                className="form-control"
+                name="favoriteFood"
+                placeholder="Favorite Food"
+                value={newStudent.favoriteFood}
+                onChange={handleInputChange}
+              />
             </div>
-            <div className="col"> 
-              <input type="text" className="form-control" name="favoriteColor" placeholder="Favorite Color" value={newStudent.favoriteColor} onChange={handleInputChange} />
-            </div>
-
-            {/*Set two buttons to make su user want to add or cancel*/}
             <div className="col">
-              <button className="btn btn-success" onClick={addStudent}>Add</button>
-              <button className="btn btn-secondary" onClick={() => setIsAdding(false)}>Cancel</button>
+              <input
+                type="text"
+                className="form-control"
+                name="favoriteColor"
+                placeholder="Favorite Color"
+                value={newStudent.favoriteColor}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="col">
+              <button className="btn btn-success" onClick={addStudent}>
+                Add
+              </button>
+              <button
+                className="btn btn-secondary"
+                onClick={() => setIsAdding(false)}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/*Table View*/}
-      <StudentTable students={students} setSelectedStudent={setSelectedStudent}/>
+      {/* Student Table display and Profile card display when select student on table */}
+      <StudentTable
+        students={students}
+        setSelectedStudent={setSelectedStudent}
+      />
 
-      {/* Profile Card View */}
+      {/* Profile Card diaplay with edit and delete student*/}
       {selectedStudent && (
         <div className="d-flex justify-content-center mt-4">
-          <ProfileCard student={selectedStudent} updateStudent={updateStudent} deleteStudent={deleteStudent} />            
+          <ProfileCard
+            student={selectedStudent}
+            updateStudent={updateStudent}
+            deleteStudent={deleteStudent}
+          />
         </div>
       )}
-      </div>
-      );
-    };
+    </div>
+  );
+};
 
-    export default App;
-            
-
+export default App;
